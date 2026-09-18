@@ -1,0 +1,391 @@
+.app {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  background: #0d1124;
+  color: #fff7df;
+}
+
+.phone-shell {
+  --ink: #3b2527;
+  --cream: #fff1cf;
+  --yellow: #ffd96b;
+  position: relative;
+  width: min(100vw, 430px);
+  height: min(100svh, 932px);
+  min-height: 640px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #1b2850;
+  box-shadow: 0 22px 80px #0009;
+}
+
+.scene-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  background: linear-gradient(#17244833, #11162a88), url('/assets/background/night-room-clean.png') center/cover no-repeat;
+}
+
+.scene-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #11183410 40%, #0b102066 100%);
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: inset 0 0 54px #080b1e66;
+}
+
+.goodnight .phone-shell { filter: brightness(.72) saturate(.85); }
+
+button { font: inherit; -webkit-tap-highlight-color: transparent; }
+
+button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+.home-screen { position: absolute; inset: 0; }
+
+.sound-float,
+.icon-button,
+.modal-close {
+  border: 2px solid #ffefd488;
+  color: #fff8e8;
+  background: #171b34dd;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.sound-float {
+  position: absolute;
+  z-index: 4;
+  top: max(18px, env(safe-area-inset-top));
+  right: 18px;
+  width: 49px;
+  height: 49px;
+  border-radius: 16px;
+}
+
+.sound-float svg,
+.icon-button svg,
+.modal-close svg { width: 25px; fill: currentColor; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.home-copy {
+  position: absolute;
+  z-index: 2;
+  left: 6%;
+  top: 5%;
+  width: 59%;
+  text-align: left;
+}
+
+.title-sticker { display: block; width: 94%; height: auto; filter: drop-shadow(0 4px 0 #1f2447aa); }
+
+.home-copy p {
+  margin: 14px 0 0 6px;
+  color: #fff8e9;
+  font-family: 'Kaiti SC', STKaiti, KaiTi, serif;
+  font-size: clamp(17px, 5vw, 22px);
+  line-height: 1.62;
+  letter-spacing: .04em;
+  text-shadow: 0 2px 4px #111633;
+}
+
+.home-food { position: absolute; z-index: 2; left: 7%; right: 6%; top: 41%; height: 36%; }
+.cup-visual.home-cup-visual {
+  width: 72%;
+  height: auto;
+  aspect-ratio: 1274 / 1235;
+  left: 50%;
+  right: auto;
+  top: 5%;
+  bottom: auto;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 14px 11px #090a183f);
+}
+
+.home-note {
+  position: absolute;
+  z-index: 5;
+  left: 3%;
+  top: 64%;
+  width: 30%;
+  padding: 12px 10px 14px;
+  transform: rotate(-6deg);
+  color: #33252d;
+  background: linear-gradient(145deg, #ffc1bb, #f4a7aa);
+  border: 2px solid #7d5356;
+  border-radius: 2px;
+  box-shadow: 0 7px 0 #6f494d99;
+  font-family: 'Kaiti SC', STKaiti, KaiTi, serif;
+  font-size: clamp(13px, 3.8vw, 16px);
+  line-height: 2;
+  white-space: nowrap;
+}
+.home-note span { border-top: 1px solid #895d5c66; }
+
+.primary-cta,
+.secondary-cta {
+  min-height: 56px;
+  border-radius: 24px;
+  cursor: pointer;
+  font-family: 'Kaiti SC', STKaiti, KaiTi, serif;
+  font-weight: 800;
+  letter-spacing: .04em;
+}
+
+.primary-cta {
+  color: var(--ink);
+  background: linear-gradient(#ffe98c, #ffc957);
+  border: 3px solid #fff1bb;
+  box-shadow: 0 7px 0 #783f2d, 0 11px 20px #090b1c55;
+}
+.primary-cta:active { transform: translateY(4px); box-shadow: 0 3px 0 #783f2d; }
+.primary-cta svg { width: 24px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+.home-cta {
+  position: absolute;
+  z-index: 5;
+  left: 19%;
+  right: 19%;
+  bottom: 14.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  font-size: clamp(23px, 7vw, 31px);
+}
+.home-cta span { font-size: .8em; }
+
+.home-nav {
+  position: absolute;
+  z-index: 5;
+  left: 10%;
+  right: 10%;
+  bottom: 2.8%;
+  display: flex;
+  justify-content: space-between;
+}
+.home-nav button { border: 0; color: #fff6e8; background: none; display: grid; justify-items: center; gap: 3px; cursor: pointer; font-family: 'Kaiti SC', STKaiti, KaiTi, serif; font-size: clamp(13px, 3.8vw, 17px); text-shadow: 0 2px 3px #111; }
+.home-nav img { width: 52px; height: 52px; object-fit: contain; filter: drop-shadow(0 3px 3px #05061166); }
+
+.topbar { position: relative; z-index: 5; height: 72px; padding: max(14px, env(safe-area-inset-top)) 16px 0; display: flex; align-items: center; justify-content: space-between; }
+.icon-button { width: 43px; height: 43px; border-radius: 15px; }
+.step-chip { max-width: 58%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 7px 15px; border-radius: 999px; color: #fff3d8; background: #121831c4; border: 1px solid #fff3d844; font-size: 13px; letter-spacing: .08em; }
+
+.panel { position: relative; z-index: 2; height: calc(100% - 72px); box-sizing: border-box; padding: 21px 22px 24px; text-align: center; display: flex; flex-direction: column; align-items: stretch; }
+.eyebrow { margin: 0; color: #ffd56a; font-size: 13px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.panel h1 { margin: 8px 0 4px; color: #fff6df; font-family: 'Kaiti SC', STKaiti, KaiTi, serif; font-size: clamp(29px, 8vw, 38px); line-height: 1.15; text-shadow: 0 3px 0 #3a254b; }
+.subcopy { margin: 8px auto 0; max-width: 310px; color: #ddd9dd; font-size: 14px; line-height: 1.55; }
+
+.choice-list { margin-top: 22px; display: grid; gap: 12px; overflow: auto; padding: 3px 3px 12px; scrollbar-width: none; }
+.choice-list::-webkit-scrollbar { display: none; }
+.choice-card { min-height: 91px; display: grid; grid-template-columns: 70px 1fr 27px; align-items: center; gap: 13px; padding: 10px 14px 10px 10px; border: 2px solid #e8d9c155; border-radius: 22px; color: #fff8e8; background: linear-gradient(110deg, #27345be6, #1b2242e6); box-shadow: 0 8px 20px #080a1b55; text-align: left; cursor: pointer; }
+.choice-card.selected { border-color: #ffd56a; background: linear-gradient(110deg, #4a3d53ee, #2c294aee); box-shadow: 0 0 0 3px #ffd56a26, 0 8px 20px #080a1b55; }
+.choice-art { width: 66px; height: 66px; display: grid; place-items: center; border-radius: 18px; background: #f4d9a522; font-size: 35px; overflow: hidden; }
+.choice-art img { width: 91%; height: 91%; object-fit: contain; }
+.choice-card strong { display: block; font-family: 'Kaiti SC', STKaiti, KaiTi, serif; font-size: 20px; }
+.choice-card small { display: block; margin-top: 3px; color: #bebacc; font-size: 12px; }
+.choice-card i { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; color: #513b25; background: #ffd56a; font-style: normal; font-weight: 900; }
+.choice-grid { grid-template-columns: 1fr 1fr; gap: 9px; }
+.choice-grid .choice-card { min-height: 132px; grid-template-columns: 1fr 22px; grid-template-rows: 72px auto; gap: 2px; padding: 8px 10px 10px; }
+.choice-grid .choice-art { width: 76px; height: 70px; grid-column: 1 / -1; justify-self: center; background: transparent; }
+.choice-grid .choice-card strong { font-size: 17px; }
+.choice-grid .choice-card small { display: none; }
+.choice-grid .choice-card i { width: 21px; height: 21px; font-size: 12px; }
+
+.next-cta { margin-top: auto; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 21px; }
+.action-screen { padding-top: 30px; }
+.ramen-stage { position: relative; width: min(92%, 365px); aspect-ratio: 1 / .96; margin: 8px auto 0; border: 0; background: transparent; }
+.cup-visual { position: absolute; inset: 0; }
+.cup-body { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.cup-opening { position: absolute; z-index: 2; left: 5.8%; top: 6.5%; width: 88.4%; height: 34%; overflow: hidden; border-radius: 50%; }
+.cup-surface { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.noodle-serving { position: absolute; left: 50%; top: 50%; width: 94%; height: 96%; object-fit: fill; transform: translate(-50%, -50%); }
+.noodle-cooked { width: 99%; height: 127%; }
+/* Compensate for each PNG's transparent border so the visible nest fills the cup. */
+.noodle-udon { height: 105%; }
+.noodle-spinach { height: 115%; }
+.noodle-dry { width: 102%; height: 105%; filter: saturate(.92) drop-shadow(0 2px 1px #78442a44); }
+.noodle-udon.noodle-dry { height: 115%; }
+.noodle-spinach.noodle-dry { height: 126%; }
+.cup-opening.has-noodles:not(.is-dry) { background: #c77722; }
+.cup-opening.broth-tonkotsu:not(.is-dry) { background: #ead4a6; }
+.cup-opening.has-noodles.broth-mala:not(.is-dry) { background: #b5431d; }
+.broth-surface { inset: -12% -5%; width: 110%; height: 124%; }
+.broth-tonkotsu .broth-surface { filter: saturate(.12) brightness(1.6); opacity: .45; }
+.broth-mala .broth-surface { filter: saturate(1.3) hue-rotate(-12deg) brightness(.9); }
+.seasoning-settled { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.seasoning-pour { position: absolute; z-index: 4; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.ramen-stage[class*="prep-"] { margin-top: 57px; }
+.seasoning-packet { transform-origin: 186px 24px; animation: packet-pour 2.3s ease-in-out both; }
+.seasoning-grain.falling { animation: seasoning-fall .55s cubic-bezier(.42, 0, .85, .7) both; }
+.primary-cta:disabled { cursor: wait; filter: saturate(.6); opacity: .8; }
+@keyframes packet-pour {
+  0% { opacity: 0; transform: translate(18px, -12px) rotate(-35deg); }
+  18% { opacity: 1; transform: rotate(20deg); }
+  36%, 58% { transform: rotate(25deg); }
+  46%, 68% { transform: rotate(17deg); }
+  82% { opacity: 1; transform: rotate(20deg); }
+  100% { opacity: 0; transform: translate(35px, -30px) rotate(-20deg); }
+}
+@keyframes seasoning-fall {
+  0% { opacity: 0; transform: translate(var(--grain-x), var(--grain-y)) scale(.55); }
+  12% { opacity: 1; }
+  100% { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+.cup-steam { position: absolute; z-index: 8; left: 37%; top: -30%; width: 26%; height: 48%; object-fit: contain; opacity: .72; animation: steam 2.7s ease-in-out infinite; }
+.cup-lid-closed { position: absolute; z-index: 7; left: -.5%; top: 0; width: 101%; height: 45%; object-fit: fill; filter: drop-shadow(0 5px 4px #08091455); }
+.cup-lid-open {
+  position: absolute;
+  z-index: 7;
+  left: -16%;
+  top: -19%;
+  width: 72.4%;
+  height: 52%;
+  object-fit: fill;
+  transform: none;
+  transform-origin: 17% 96%;
+  filter: drop-shadow(0 5px 4px #08091455);
+}
+.cup-opening .topping-layer { position: absolute; z-index: 3; inset: 0; pointer-events: none; }
+.topping { position: absolute; height: auto; max-width: none; filter: drop-shadow(0 2px 1px #4a1e1466); }
+.recipe-strip { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; margin: -7px 0 15px; }
+.recipe-strip span { padding: 6px 9px; border: 1px solid #fff3dc42; border-radius: 999px; background: #101731a8; color: #e8e2d8; font-size: 11px; }
+.tap-cta { width: 100%; margin-top: auto; font-size: 21px; }
+
+.waiting-screen .timer-bowl { position: relative; width: 95%; max-width: 370px; aspect-ratio: 1 / .95; margin: 14px auto 0; border: 0; background: transparent; cursor: pointer; }
+.timer-bowl .cup-visual { inset: 7% 0 auto; aspect-ratio: 1 / .96; }
+.timer { position: absolute; z-index: 10; left: 50%; top: 36%; transform: translate(-50%, -50%); min-width: 112px; padding: 8px 12px; border-radius: 13px; color: #87d5ff; background: #13152b; border: 2px solid #625c77; font: 800 30px/1 ui-monospace, monospace; box-shadow: inset 0 0 12px #459fff44; }
+.pulse-ring { position: absolute; z-index: 1; inset: 20%; border: 3px solid #ffd66a99; border-radius: 50%; animation: pulse 2s infinite; }
+.hint { margin: auto 0 4px; color: #e7dfd6; font-size: 13px; }
+
+.opening-stage { cursor: pointer; margin-top: 22px; }
+.lid-wiggle { animation: lid 1.7s ease-in-out infinite; }
+.eating-bowl { margin-top: 5px; cursor: pointer; }
+.eating-bowl .ramen-main { filter: drop-shadow(0 16px 13px #08091477) var(--food-filter, none); }
+.cup-chopsticks { position: absolute; z-index: 9; right: -1%; top: -9%; width: 54%; height: 49%; object-fit: contain; transform-origin: 84% 8%; transform: rotate(-4deg); transition: transform .28s ease; }
+.cup-chopsticks.bite-1 { transform: rotate(2deg) translate(-12px, 12px); }
+.cup-chopsticks.bite-2 { transform: rotate(-8deg) translate(-6px, -8px); }
+.bite-progress { height: 9px; margin: 2px 15% 12px; overflow: hidden; border: 2px solid #fae5c744; border-radius: 999px; background: #10162fbb; }
+.bite-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #ff8f5e, #ffd867); transition: width .3s ease; }
+.soup-bowl { cursor: pointer; transition: transform .25s ease; }
+.soup-bowl.sip-1 { transform: rotate(-3deg) scale(.96); }
+.soup-bowl.sip-2 { transform: rotate(4deg) scale(.92); }
+
+.finish-screen { padding-top: 52px; }
+.empty-cup { width: min(77%, 310px); margin: 18px auto 0; filter: drop-shadow(0 18px 14px #08091477); }
+.finish-actions { display: grid; gap: 14px; margin-top: auto; }
+.finish-actions button { width: 100%; font-size: 20px; }
+.secondary-cta { color: #fff2d7; border: 2px solid #ffe4a877; background: #17203ed9; }
+
+.modal-backdrop { position: absolute; z-index: 40; inset: 0; display: grid; place-items: center; padding: 22px; background: #090b19b8; backdrop-filter: blur(6px); }
+.modal-card { position: relative; width: 100%; box-sizing: border-box; padding: 28px 22px 22px; border: 3px solid #f2d59c; border-radius: 28px; color: #39282d; background: #fff0d0; box-shadow: 0 16px 0 #48303f, 0 28px 60px #0008; text-align: left; }
+.modal-card h2 { margin: 7px 0 20px; font: 800 27px/1.2 'Kaiti SC', STKaiti, KaiTi, serif; }
+.modal-card .eyebrow { color: #a1523f; }
+.modal-card ol { margin: 0; padding-left: 24px; line-height: 1.9; }
+.modal-close { position: absolute; right: 14px; top: 14px; width: 38px; height: 38px; border-color: #55394244; border-radius: 13px; color: #49343a; background: #f6dba9; }
+.setting-row { width: 100%; padding: 16px; display: flex; justify-content: space-between; border: 2px solid #7c515244; border-radius: 17px; color: #39282d; background: #ffe7b8; cursor: pointer; }
+.setting-row b { color: #aa4c3f; }
+
+@keyframes steam { 0%,100% { transform: translateY(5px) scale(.96); opacity: .45; } 50% { transform: translateY(-9px) scale(1.03); opacity: .78; } }
+@keyframes pulse { 0% { transform: scale(.7); opacity: .7; } 100% { transform: scale(1.2); opacity: 0; } }
+@keyframes lid { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-2deg) translate(-2px, -3px); } }
+
+@media (max-height: 760px) {
+  .home-copy { top: 3%; }
+  .title-sticker { width: 84%; }
+  .home-copy p { margin-top: 7px; font-size: 16px; line-height: 1.45; }
+  .home-food { top: 37%; height: 38%; }
+  .home-cta { bottom: 14%; min-height: 51px; }
+  .home-nav { bottom: 1.5%; }
+  .home-nav img { width: 45px; height: 45px; }
+  .panel { padding-top: 14px; }
+  .choice-list { margin-top: 12px; gap: 8px; }
+  .choice-card { min-height: 77px; }
+  .choice-grid .choice-card { min-height: 106px; grid-template-rows: 56px auto; }
+  .choice-grid .choice-art { width: 60px; height: 55px; }
+  .ramen-stage { width: min(76%, 310px); }
+}
+
+@media (min-width: 700px) { .phone-shell { border-radius: 30px; border: 1px solid #ffffff22; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .seasoning-grain.falling { animation-delay: 0s !important; }
+  .noodle-serving { transition: none; }
+}
+
+/* Continue pulling the already lifted lid from its registered resting pose. */
+.lid-peeling { animation: peel-away 850ms ease-in-out forwards; }
+@keyframes peel-away {
+  0% { transform: none; opacity: 1; }
+  32% { transform: translate(-3%, -7%) rotate(-10deg) skewY(-4deg); opacity: 1; }
+  64% { transform: translate(-12%, -22%) rotate(-23deg) skewY(2deg); opacity: 1; }
+  100% { transform: translate(-38%, -60%) rotate(-36deg); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lid-peeling { animation: peel-away 1ms linear forwards; }
+}
+
+/* Mirror the lid artwork only; keep the right-to-left peeling motion unchanged. */
+.cup-lid-closed > img { display: block; width: 100%; height: 100%; object-fit: fill; transform: scaleX(-1); }
+
+.lid-curling canvas { position: absolute; width: 300%; height: 400%; left: -100%; top: -200%; pointer-events: none; }
+
+.lid-tap-target { position: absolute; z-index: 9; left: -.5%; top: 0; width: 101%; height: 45%; border: 0; border-radius: 50%; padding: 0; background: transparent; cursor: pointer; }
+.lid-tap-target:disabled { cursor: default; }
+
+.noodle-drop-space { overflow: visible; pointer-events: none; z-index: 4; }
+.noodle-dropping { animation: place-noodles 1100ms ease-in-out both; }
+@keyframes place-noodles {
+  0% { opacity: 0; transform: translate(-50%, -125%) rotate(-9deg) scale(.94); }
+  15% { opacity: 1; transform: translate(-50%, -120%) rotate(-8deg) scale(.96); }
+  66% { opacity: 1; transform: translate(-50%, -47%) rotate(1deg) scale(1); }
+  80% { transform: translate(-50%, -53%) rotate(-.5deg); }
+  90%, 100% { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.water-pour { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 8; overflow: visible; pointer-events: none; }
+.pour-kettle { transform-origin: 258px 0; animation: kettle-tip 2.6s ease-in-out both; }
+.water-stream { animation: water-flow 2.6s ease-in-out both; }
+.water-ripples { transform-origin: 228px 79px; animation: water-ripple 650ms ease-out 4; }
+.is-watering .broth-surface { animation: broth-fill 2.3s ease-out both; }
+@keyframes kettle-tip { 0% { opacity: 0; transform: translate(25px, -12px) rotate(18deg); } 16%,78% { opacity: 1; transform: rotate(-14deg); } 100% { opacity: 0; transform: translate(28px, -18px) rotate(12deg); } }
+@keyframes water-flow { 0%,16%,85%,100% { opacity: 0; } 24%,76% { opacity: 1; } }
+@keyframes water-ripple { 0% { opacity: 0; transform: scale(.4); } 35% { opacity: .85; } 100% { opacity: 0; transform: scale(1.3); } }
+@keyframes broth-fill { 0%,18% { opacity: 0; transform: translateY(12%) scale(.9); } 100% { transform: none; } }
+
+/* Home illustration contains transparent margins; register its painted edge to the cup opening. */
+.home-cup-visual .cup-surface { left: -7%; top: -17%; width: 114%; height: 132%; }
+
+
+/* The ending shares the same portrait frame as the game. */
+.is-sleeping .phone-shell { filter: none; background: #080f20; }
+.is-sleeping .scene-bg, .is-sleeping .vignette { display: none; }
+.sleep-screen { position: absolute; inset: 0; background: #080f20; container-type: size; overflow: hidden; }
+.sleep-scene { position: absolute; left: 50%; top: 62%; width: max(100cqw, 48.94cqh); aspect-ratio: 877 / 1792; transform: translate(-50%, -62%); animation: sleep-settle 1.8s ease-out both; }
+.sleep-art { width: 100%; height: 100%; display: block; }
+.sleep-zzz { position: absolute; left: 46%; top: 37%; width: 16%; height: 9%; pointer-events: none; }
+.sleep-zzz span { position: absolute; left: 0; bottom: 0; width: clamp(24px, 7cqw, 32px); height: clamp(24px, 7cqw, 32px); opacity: 0; animation: sleepy-letter 4.8s ease-in-out infinite; }
+.sleep-zzz svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 2px 0 #111a32); }
+.sleep-zzz path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.zzz-outline { stroke: #344265; stroke-width: 12; }
+.zzz-fill { stroke: #dddcc4; stroke-width: 7; }
+.sleep-zzz span:nth-child(2) { animation-delay: 1.6s; }
+.sleep-zzz span:nth-child(3) { animation-delay: 3.2s; }
+@keyframes sleepy-letter {
+  0% { opacity: 0; transform: translate(0, 0) scale(.65) rotate(-8deg); }
+  20% { opacity: .65; }
+  70% { opacity: .5; }
+  100% { opacity: 0; transform: translate(24px, -64px) scale(1.15) rotate(6deg); }
+}
+.sleep-back { position: absolute; top: max(16px, env(safe-area-inset-top)); left: 16px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: #0a102033; color: #d4d8e080; cursor: pointer; }
+.sleep-back svg { width: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+@keyframes sleep-settle { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sleep-scene { animation: none; } .sleep-zzz span { animation: none; opacity: .5; } .sleep-zzz span:nth-child(2) { transform: translate(12px, -20px); } .sleep-zzz span:nth-child(3) { transform: translate(24px, -40px); } }
