@@ -1,0 +1,7 @@
+const { mkdtempSync } = require('node:fs')
+const { tmpdir } = require('node:os')
+const { join } = require('node:path')
+const { execFileSync } = require('node:child_process')
+const output = mkdtempSync(join(tmpdir(), 'ramen-survival-tests-'))
+execFileSync(process.execPath, ['node_modules/typescript/bin/tsc','src/survival.ts','src/survivalConfig.ts','src/eatingSystem.ts','src/SurvivalScreen.tsx','--jsx','react-jsx','--module','commonjs','--target','es2020','--outDir',output,'--skipLibCheck','--ignoreConfig'], {stdio:'inherit'})
+execFileSync(process.execPath, ['--test','tests/survival.test.cjs','tests/survival-input.test.cjs'], {stdio:'inherit',env:{...process.env,SURVIVAL_TEST_BUILD:output}})

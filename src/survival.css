@@ -1,0 +1,49 @@
+.survival-screen { padding: 10px 22px 24px; touch-action: manipulation; user-select: none; display: grid; grid-template-rows: auto 110px minmax(150px,1fr) 154px; gap: 5px; }
+.survival-screen h1 { font-size: 29px; margin: 6px 0; }
+.watcher-row { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 360px; margin: 0 auto; }
+.watcher-art { width: 46%; height: 110px; position: relative; flex-shrink: 0; }
+.watcher-cat { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 4px 2px #17162888); }
+.watcher-symbol { position: absolute; right: 6%; top: 0; width: 29px; height: 35px; object-fit: contain; }
+.alert-display { flex: 1; min-width: 0; }
+.alert-label { display: flex; justify-content: space-between; color: #fff0d9; font-size: 12px; margin-bottom: 8px; }
+.alert-label span:last-child { opacity: .75; }
+.alert-track { height: 17px; background: #22243e; border: 3px solid #fff0db; border-radius: 20px; padding: 2px; box-shadow: 0 0 0 2px #2b2447, 0 3px 0 #1e1737; overflow: hidden; }
+.alert-track > span { display: block; height: 100%; border-radius: 12px; background: #b5c768; transition: width .22s ease, background .22s ease; }
+.alert-halfAwake .alert-track > span { background: #eab75f; }
+.alert-danger .alert-track > span, .alert-caught .alert-track > span { background: #ed7960; }
+.survival-screen .survival-food { position: relative; top: auto; left: auto; width: min(100%, 300px); height: 100%; aspect-ratio: auto; max-height: 320px; min-height: 0; margin: auto; align-self: center; }
+.survival-food > .cup-visual { position: absolute; width: 100%; height: 100%; inset: 0; }
+.hit-feedback { position: absolute; left: -10px; right: -10px; top: 12%; z-index: 15; color: #ffdc8a; font-weight: 900; font-size: 23px; text-shadow: 0 2px 0 #492c36, 0 0 8px #342438; pointer-events: none; }
+.hit-miss .cup-visual { animation: cup-clack .4s ease; }
+.hit-miss .cup-chopsticks { animation: chop-clack .4s ease; }
+.hit-perfect .cup-visual { animation: big-bite .5s ease; }
+.hit-miss .hit-feedback { font-size: 17px; color: #ffd8c1; }
+.survival-controls { align-self: end; padding: 8px 0 0; }
+.timing-rail { height: 30px; border: 3px solid #fae8c6; border-radius: 20px; position: relative; background: #503b52; box-shadow: 0 4px 0 #241f36; margin: 0 8px 28px; }
+.safe-zone { position: absolute; left: 50%; top: 0; bottom: 0; transform: translateX(-50%); background: #b3c17a; display: flex; justify-content: space-around; align-items: center; color: #33412c; font-size: 10px; font-weight: 800; }
+.perfect-zone { position: absolute; left: 50%; top: -2px; bottom: -2px; transform: translateX(-50%); background: #ffe397; border: 1px solid #fff8d8; }
+.slider-cursor { position: absolute; left: 0; top: -9px; bottom: -6px; width: 4px; border-radius: 3px; background: #fff8ea; box-shadow: 0 0 0 2px #322941; transform: translateX(-50%); }
+.slider-cursor::before { content: ''; position: absolute; left: -5px; top: -4px; border: 7px solid transparent; border-top-color: #fff8ea; }
+.perfect-label { position: absolute; top: 33px; left: 50%; transform: translateX(-50%); color: #ffe397; font-size: 10px; letter-spacing: 1px; }
+.survival-hint { color: #f0e0d2; margin: 10px 0 12px; font-size: 12px; }
+.survival-tap { width: calc(100% - 56px); margin-left: 56px; min-height: 56px; font-size: 21px; }
+.caught-actions { display: flex; gap: 10px; margin-left: 56px; }
+.caught-actions button { min-height: 56px; font-size: 17px; padding: 10px 12px; flex: 1; }
+.status-caught .timing-rail { opacity: .5; }
+.mode-instructions { text-align: left; font-size: 14px; line-height: 1.65; }
+.mode-instructions + .mode-instructions { margin-top: 22px; padding-top: 18px; border-top: 1px solid #6b3e4233; }
+.mode-instructions h3 { margin: 0 0 8px; color: #6b3e42; }
+.mode-instructions ol { margin-bottom: 0; }
+.survival-instructions p { margin: 0 0 12px; }
+.survival-instructions p:last-child { margin-bottom: 0; }
+.modal-card { max-height: 82vh; overflow-y: auto; }
+@keyframes cup-clack { 25% { transform: rotate(-2deg); } 55% { transform: rotate(2deg); } }
+@keyframes chop-clack { 35% { transform: translate(-10px,25px) rotate(12deg); } }
+@keyframes big-bite { 40% { transform: translateY(-5px) scale(1.025); } }
+@media (max-height: 690px) { .survival-screen { grid-template-rows: auto 82px minmax(120px,1fr) 146px; gap: 0; padding-top: 0; } .watcher-art { height: 82px; } .survival-screen h1 { font-size: 25px; } }
+@media (prefers-reduced-motion: reduce) { .survival-food .cup-visual, .survival-food .cup-chopsticks { animation: none; } .alert-track > span { transition: none; } }
+
+.is-survival .scene-bg { background-image: linear-gradient(#17244833, #11162a88), url('/assets/background/night-room-survival.png'); }
+
+.survival-food-slot { position: relative; min-height: 0; container-type: size; display: grid; place-items: center; }
+.survival-screen .survival-food { width: min(100%, 300px, calc(100cqh / .96)); height: auto; aspect-ratio: 1 / .96; max-height: none; }

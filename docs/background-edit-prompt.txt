@@ -1,0 +1,5 @@
+Tool: built-in image_gen, edit mode.
+Source: public/assets/background/night-room-clean.png
+Output: public/assets/background/night-room-survival.png
+
+Precise object removal only: remove the small sleeping black-and-white cat on the bed on the LEFT (around x=35..255 y=545..660 in the 853x1844 source), reconstruct the pillow and blue plaid bedspread underneath naturally. Keep absolutely everything else identical: same composition, dimensions/aspect ratio, outlines, original cartoon 4399 web game art style, colors, lighting, all furniture, TV dog, every letter of signage, plants, table, window, clock, camera angle. No new objects. This is a production background to overlay a separate animated cat sprite, so the bed must be empty. Save result as a new background, do not alter original.

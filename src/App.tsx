@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import './responsive.css'
+import './survival.css'
+import { SurvivalScreen } from './SurvivalScreen'
+import { advanceEatingState, eatingView } from './eatingSystem'
 import { WaterPour, WATER_DURATION } from './WaterPour'
 import { PeelingLid } from './PeelingLid'
 import { cookedNoodleImage, noodleLevelForBites, NOODLE_LEVELS, type NoodleLevel } from './noodleFrames'
@@ -8,8 +11,8 @@ import { SeasoningGrains, SeasoningPour, SEASONING_DURATION } from './Seasoning'
 import { toppingLayout } from './toppingLayout'
 import { asset, broths, noodles, prepSteps, toppings, type Choice, type Stage } from './game'
 
-const STORAGE_SOUND = 'ramen-night-sound-enabled'
-const STORAGE_NIGHT = 'ramen-night-goodnight-mode'
+const STORAGE_SOUND = 'ramen-survival-v1-sound-enabled'
+const STORAGE_NIGHT = 'ramen-survival-v1-goodnight-mode'
 const SLURP_SOUNDS = [
   '/assets/audio/slurp/slurp-short-01.mp3',
   '/assets/audio/slurp/slurp-short-02.mp3',
@@ -44,11 +47,14 @@ function App() {
   const [restoringPrep, setRestoringPrep] = useState(false)
   const transitionRef = useRef<number | undefined>(undefined)
   const [seconds, setSeconds] = useState(20)
-  const [bites, setBites] = useState(0)
-  const [sips, setSips] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const { bites, sips } = eatingView(progress)
+  const [mode, setMode] = useState<'normal' | 'survival'>('normal')
   const [soundOn, setSoundOn] = useState(() => localStorage.getItem(STORAGE_SOUND) !== 'false')
-  const [nightMode, setNightMode] = useState(() => localStorage.getItem(STORAGE_NIGHT) === 'true')
+  const [nightMode] = useState(() => localStorage.getItem(STORAGE_NIGHT) === 'true')
   const [modal, setModal] = useState<'settings' | 'how' | null>(null)
+  const soundEnabled = useRef(soundOn)
+  useEffect(() => { soundEnabled.current = soundOn }, [soundOn])
   const musicRef = useRef<HTMLAudioElement>(null)
   const roomRef = useRef<HTMLAudioElement>(null)
   const effectRef = useRef<HTMLAudioElement | null>(null)
@@ -148,9 +154,10 @@ function App() {
     return () => window.clearTimeout(transition)
   }, [seconds, stage])
 
-  const start = () => {
+  const start = (nextMode: 'normal' | 'survival' = 'normal') => {
+    setMode(nextMode)
     window.clearTimeout(transitionRef.current)
-    setPrepIndex(0); setRestoringPrep(false); setSeconds(20); setBites(0); setSips(0)
+    setPrepIndex(0); setRestoringPrep(false); setSeconds(20); setProgress(0)
     setStage('broth')
     if (soundOn) {
       void musicRef.current?.play().catch(() => undefined)
@@ -159,17 +166,19 @@ function App() {
   }
 
   const reset = () => {
+    effectCleanup.current?.(); effectRef.current?.pause()
     window.clearTimeout(transitionRef.current)
     setRestoringPrep(false)
     setStage('home')
     setSelectedToppings([])
     setPrepIndex(0)
     setSeconds(20)
-    setBites(0)
-    setSips(0)
+    setProgress(0)
+    setMode('normal')
   }
 
   const goBack = () => {
+    if (mode === 'survival' && ['eating', 'soup', 'finished'].includes(stage)) { reset(); return }
     window.clearTimeout(transitionRef.current)
     effectCleanup.current?.()
     effectRef.current?.pause()
@@ -181,13 +190,13 @@ function App() {
     } else if (stage === 'opening') {
       setSeconds(20); setStage('waiting')
     } else if (stage === 'eating') {
-      if (bites > 0) setBites(value => value - 1)
+      if (bites > 0) setProgress(value => value - 1)
       else setStage('opening')
     } else if (stage === 'soup') {
-      if (sips > 0) setSips(value => value - 1)
-      else { setBites(6); setStage('eating') }
+      if (sips > 0) setProgress(value => value - 1)
+      else { setProgress(6); setStage('eating') }
     } else if (stage === 'finished') {
-      setSips(2); setStage('soup')
+      setProgress(9); setStage('soup')
     } else {
       const previous: Partial<Record<Stage, Stage>> = { broth: 'home', noodle: 'broth', toppings: 'noodle' }
       setStage(previous[stage] ?? 'home')
@@ -201,7 +210,7 @@ function App() {
   }
 
   const playEffect = (source: string, volume = 0.62) => {
-    if (!soundOn) return
+    if (!soundEnabled.current) return
     effectCleanup.current?.()
     effectRef.current?.pause()
     const effect = effectRef.current
@@ -249,21 +258,21 @@ function App() {
   const eat = () => {
     playEffect(SLURP_SOUNDS[bites % SLURP_SOUNDS.length])
     if (bites >= 6) {
-      setBites(7)
+      setProgress(value => advanceEatingState(value, 1))
       transitionRef.current = window.setTimeout(() => setStage('soup'), 420)
-    } else setBites((value) => value + 1)
+    } else setProgress(value => advanceEatingState(value, 1))
   }
 
   const drink = () => {
     playEffect(sips >= 2 ? FINAL_DRINK_SOUND : DRINK_SOUNDS[sips % DRINK_SOUNDS.length], sips >= 2 ? 0.70 : 0.58)
     if (sips >= 2) {
-      setSips(3)
+      setProgress(value => advanceEatingState(value, 1))
       transitionRef.current = window.setTimeout(() => setStage('finished'), 420)
-    } else setSips((value) => value + 1)
+    } else setProgress(value => advanceEatingState(value, 1))
   }
 
   return (
-    <main className={`app ${nightMode ? 'goodnight' : ''} ${stage === 'sleeping' ? 'is-sleeping' : ''}`}>
+    <main className={`app ${nightMode ? 'goodnight' : ''} ${stage === 'sleeping' ? 'is-sleeping' : ''} ${mode === 'survival' && stage === 'eating' ? 'is-survival' : ''}`}>
       <audio ref={snoreFirstRef} src="/assets/audio/snoring/snore-01.mp3" preload="auto" data-audio="snore-first" />
       <audio ref={snoreSecondRef} src="/assets/audio/snoring/snore-02.mp3" preload="auto" data-audio="snore-second" />
       <audio ref={effectRef} preload="auto" data-audio="interaction-effect" />
@@ -272,7 +281,7 @@ function App() {
       <div className="phone-shell">
         <div className="scene-bg" />
         {stage === 'sleeping' ? <SleepScreen back={reset} /> : stage === 'home' ? (
-          <HomeScreen start={start} soundOn={soundOn} setSoundOn={setSoundOn} nightMode={nightMode} setNightMode={setNightMode} setModal={setModal} />
+          <HomeScreen start={() => start('normal')} survival={() => start('survival')} soundOn={soundOn} setSoundOn={setSoundOn} setModal={setModal} />
         ) : (
           <>
             <header className="topbar">
@@ -286,9 +295,10 @@ function App() {
             {stage === 'prepare' && <PrepareScreen key={`${prepIndex}-${restoringPrep}`} restored={restoringPrep} index={prepIndex} broth={broth} noodle={noodle} selected={selectedToppings} playInteraction={playInteraction} advance={() => { setRestoringPrep(false); if (prepIndex === 5) setSeconds(20); const nextIndex = prepIndex === 2 && selectedToppings.length === 0 ? 4 : prepIndex + 1; if (nextIndex === 4) playInteraction('water-pour'); return prepIndex < prepSteps.length - 1 ? setPrepIndex(nextIndex) : setStage('waiting') }} />}
             {stage === 'waiting' && <WaitingScreen seconds={seconds} hurry={() => setSeconds((value) => Math.max(0, value - 3))} />}
             {stage === 'opening' && <OpeningScreen broth={broth} noodle={noodle} selected={selectedToppings} playInteraction={playInteraction} open={() => setStage('eating')} />}
-            {stage === 'eating' && <EatingScreen bites={bites} selected={selectedToppings} broth={broth} noodle={noodle} eat={eat} />}
-            {stage === 'soup' && <SoupScreen broth={broth} sips={sips} drink={drink} />}
-            {stage === 'finished' && <FinishedScreen again={reset} night={() => { if (soundOn && snoreFirstRef.current) { snoreFirstRef.current.volume = .32; void snoreFirstRef.current.play().catch(() => undefined) }; setStage('sleeping') }} />}
+            {stage === 'eating' && mode === 'normal' && <EatingScreen bites={bites} selected={selectedToppings} broth={broth} noodle={noodle} eat={eat} />}
+            {stage === 'soup' && mode === 'normal' && <SoupScreen broth={broth} sips={sips} drink={drink} />}
+            {stage === 'eating' && mode === 'survival' && <SurvivalScreen progress={progress} advance={setProgress} playEffect={playEffect} stopEffect={() => { effectCleanup.current?.(); effectRef.current?.pause() }} success={() => setStage('finished')} back={reset} renderFood={(value) => <EatingFood progress={value} broth={broth} noodle={noodle} selected={selectedToppings} />} />}
+            {stage === 'finished' && <FinishedScreen again={() => { if (mode === 'survival') { effectCleanup.current?.(); effectRef.current?.pause(); setSelectedToppings([]); start('survival') } else reset() }} night={() => { if (soundOn && snoreFirstRef.current) { snoreFirstRef.current.volume = .32; void snoreFirstRef.current.play().catch(() => undefined) }; setStage('sleeping') }} />}
           </>
         )}
         <div className="vignette" />
@@ -298,14 +308,9 @@ function App() {
   )
 }
 
-function HomeScreen({ start, soundOn, setSoundOn, nightMode, setNightMode, setModal }: {
-  start: () => void; soundOn: boolean; setSoundOn: (value: boolean) => void; nightMode: boolean; setNightMode: (value: boolean) => void; setModal: (value: 'settings' | 'how') => void
+function HomeScreen({ start, survival, soundOn, setSoundOn, setModal }: {
+  start: () => void; survival: () => void; soundOn: boolean; setSoundOn: (value: boolean) => void; setModal: (value: 'settings' | 'how') => void
 }) {
-  const toggleNight = () => {
-    const next = !nightMode
-    setNightMode(next)
-    localStorage.setItem(STORAGE_NIGHT, String(next))
-  }
   return <section className="home-screen">
     <button className="sound-float" onClick={() => setSoundOn(!soundOn)} aria-label={soundOn ? '关闭声音' : '打开声音'}><VolumeIcon muted={!soundOn} /></button>
     <div className="home-copy">
@@ -322,7 +327,7 @@ function HomeScreen({ start, soundOn, setSoundOn, nightMode, setNightMode, setMo
     <nav className="home-nav" aria-label="辅助功能">
       <button onClick={() => setModal('settings')}><img src={asset('ui', 'icon-settings.png')} alt="" /><span>设置</span></button>
       <button onClick={() => setModal('how')}><img src={asset('ui', 'icon-how-to.png')} alt="" /><span>玩法介绍</span></button>
-      <button onClick={toggleNight}><img src={asset('ui', 'icon-good-night.png')} alt="" /><span>晚安模式</span></button>
+      <button onClick={survival}><img src={asset('ui', 'icon-good-night.png')} alt="" /><span>偷吃模式</span></button>
     </nav>
     </div>
   </section>
@@ -418,16 +423,26 @@ function OpeningScreen({ selected, broth, noodle, open, playInteraction }: { pla
     <button className="ramen-stage opening-stage" disabled={peeling} onClick={startPeeling}><RamenCupVisual noodle={noodle} broth={broth} seasoned toppings={selected} lid="open" steam peeling={peeling} onLidRemoved={open} /></button><p className="hint">点击杯盖揭开</p></section>
 }
 
+function EatingFood({ progress, broth, noodle, selected, noodlePhase = false }: { progress: number; broth: Choice; noodle: Choice; selected: Choice[]; noodlePhase?: boolean }) {
+  const { bites, sips } = eatingView(progress)
+  if (progress >= 10) return <RamenCupVisual />
+  if (progress >= 7 && !noodlePhase) return <SoupFood sips={sips} broth={broth} />
+  return <RamenCupVisual noodle={noodle} broth={broth} noodleLevel={noodleLevelForBites(bites)} eatenBites={bites} seasoned={bites < 4} toppings={selected} steam chopsticksClass={`bite-${bites % 3}`} label="这碗泡面" />
+}
+
 function EatingScreen({ bites, selected, broth, noodle, eat }: { bites: number; selected: Choice[]; broth: Choice; noodle: Choice; eat: () => void }) {
-  const noodleLevel = noodleLevelForBites(bites)
   return <section className="panel action-screen eating-screen"><p className="eyebrow">{broth.name} · {noodle.name}</p><h1>{bites === 0 ? '趁热开吃' : bites < 6 ? '再来一口' : '最后一口面'}</h1><p className="subcopy">每点一下，就嗦掉一小口。</p>
-    <button className="ramen-stage eating-bowl" disabled={bites >= 7} onClick={eat}><RamenCupVisual noodle={noodle} broth={broth} noodleLevel={noodleLevel} eatenBites={bites} seasoned={bites < 4} toppings={selected} steam chopsticksClass={`bite-${bites % 3}`} label={`还剩 ${Math.max(0, 100 - bites * 15)}% 的面`} /></button>
+    <button className="ramen-stage eating-bowl" disabled={bites >= 7} onClick={eat}><EatingFood noodlePhase progress={bites} noodle={noodle} broth={broth} selected={selected} /></button>
     <div className="bite-progress" aria-label={`已经吃了 ${bites} 口`}><span style={{ width: `${(bites / 7) * 100}%` }} /></div><button className="primary-cta tap-cta" disabled={bites >= 7} onClick={eat}>吃一口面</button></section>
+}
+
+function SoupFood({ sips, broth }: { sips: number; broth: Choice }) {
+  return sips === 1 || sips === 2 ? <div className="cup-visual"><img className="cup-body" src={soupCupImage(broth.id, sips === 1 ? 'mid' : 'last')} alt={`${broth.name}汤，${sips === 1 ? '喝过一口的中液面' : '最后一口的低液面'}`} /></div> : <RamenCupVisual broth={broth} surface={sips < 2 ? 'ramen-broth-only.png' : undefined} label="剩下的汤" />
 }
 
 function SoupScreen({ sips, broth, drink }: { sips: number; broth: Choice; drink: () => void }) {
   return <section className="panel action-screen"><p className="eyebrow">面吃完啦</p><h1>{sips < 2 ? '喝口热汤吧' : '最后一口汤'}</h1><p className="subcopy">捧起杯子，咕嘟一小口。</p>
-    <button className={`ramen-stage soup-bowl sip-${sips}`} aria-label="剩下的汤" disabled={sips >= 3} onClick={drink}>{sips === 1 || sips === 2 ? <div className="cup-visual"><img className="cup-body" src={soupCupImage(broth.id, sips === 1 ? 'mid' : 'last')} alt={`${broth.name}汤，${sips === 1 ? '喝过一口的中液面' : '最后一口的低液面'}`} /></div> : <RamenCupVisual broth={broth} surface={sips < 2 ? 'ramen-broth-only.png' : undefined} label="剩下的汤" />}</button><div className="bite-progress"><span style={{ width: `${(sips / 3) * 100}%` }} /></div><button className="primary-cta tap-cta" disabled={sips >= 3} onClick={drink}>{sips < 2 ? '喝一口汤' : '喝完最后一口'}</button></section>
+    <button className={`ramen-stage soup-bowl sip-${sips}`} aria-label="剩下的汤" disabled={sips >= 3} onClick={drink}><SoupFood sips={sips} broth={broth} /></button><div className="bite-progress"><span style={{ width: `${(sips / 3) * 100}%` }} /></div><button className="primary-cta tap-cta" disabled={sips >= 3} onClick={drink}>{sips < 2 ? '喝一口汤' : '喝完最后一口'}</button></section>
 }
 
 function SleepScreen({ back }: { back: () => void }) {
@@ -497,7 +512,10 @@ function RamenCupVisual({ surface, noodle, broth = broths[0], noodleLevel = 100,
 function Modal({ type, close, soundOn, setSoundOn }: { type: 'settings' | 'how'; close: () => void; soundOn: boolean; setSoundOn: (value: boolean) => void }) {
   return <div className="modal-backdrop" role="presentation" onClick={close}><section className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()}><button className="modal-close" onClick={close} aria-label="关闭"><CloseIcon /></button>
     <p className="eyebrow">{type === 'settings' ? '设置' : '玩法介绍'}</p><h2 id="modal-title">{type === 'settings' ? '让深夜更舒服' : '怎么吃这碗面？'}</h2>
-    {type === 'settings' ? <><p className="settings-sound-note">打开手机音量，边吃边asmr。</p><button className="setting-row" onClick={() => setSoundOn(!soundOn)}><span>房间背景音</span><b>{soundOn ? '已开启' : '已关闭'}</b></button></> : <ol><li>选汤底、面和最多三种配菜</li><li>跟着提示，把泡面一步步泡好</li><li>点击面碗，一小口一小口吃完</li><li>喝完热汤，就安心去睡觉</li></ol>}
+    {type === 'settings' ? <><p className="settings-sound-note">打开手机音量，边吃边asmr。</p><button className="setting-row" onClick={() => setSoundOn(!soundOn)}><span>房间背景音</span><b>{soundOn ? '已开启' : '已关闭'}</b></button></> : <>
+      <div className="mode-instructions"><h3>休闲模式</h3><ol><li>选汤底、面和最多三种配菜</li><li>跟着提示，把泡面一步步泡好</li><li>点击面碗，一小口一小口吃完</li><li>喝完热汤，就安心去睡觉</li></ol></div>
+      <div className="mode-instructions survival-instructions"><h3>偷吃模式</h3><p>趁自律小猫睡着的时候偷偷吃完这碗泡面。</p><p>看准滑块时机，在安全区域内点击屏幕，就能顺利吃上一口。</p><p>如果精准击中 <strong>PERFECT</strong>，可以大幅增加吃面进度，但也会增加惊醒自律小猫的风险。</p><p>警觉太高时，先稳一点，别太贪。</p><p><strong>请确保偷吃顺利。</strong></p></div>
+    </>}
   </section></div>
 }
 

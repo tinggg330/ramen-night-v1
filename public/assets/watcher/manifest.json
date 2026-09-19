@@ -1,0 +1,37 @@
+{
+  "source": "ramen-night-assets/reference/cat ref.png",
+  "method": "Original pixels with manually traced silhouette alpha masks; separate symbol crops",
+  "canvas": [
+    240,
+    190
+  ],
+  "anchor": "bottom center",
+  "states": [
+    {
+      "file": "sleeping.png",
+      "range": "0–33"
+    },
+    {
+      "file": "stirring.png",
+      "range": "34–59"
+    },
+    {
+      "file": "halfAwake.png",
+      "range": "60–79"
+    },
+    {
+      "file": "danger.png",
+      "range": "80–99"
+    },
+    {
+      "file": "caught.png",
+      "range": ">=100"
+    }
+  ],
+  "symbols": [
+    "zzz.png",
+    "motion.png",
+    "question.png",
+    "alert.png"
+  ]
+}
