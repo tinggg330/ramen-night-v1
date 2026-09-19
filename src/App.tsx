@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import './responsive.css'
 import { WaterPour, WATER_DURATION } from './WaterPour'
 import { PeelingLid } from './PeelingLid'
 import { cookedNoodleImage, noodleLevelForBites, NOODLE_LEVELS, type NoodleLevel } from './noodleFrames'
@@ -275,10 +276,10 @@ function App() {
         ) : (
           <>
             <header className="topbar">
-              <button className="icon-button" onClick={goBack} aria-label="返回"><BackIcon /></button>
               <div className="step-chip">今晚这碗 · {stageLabel(stage)}</div>
               <button className="icon-button" onClick={() => setSoundOn((value) => !value)} aria-label={soundOn ? '关闭声音' : '打开声音'}><VolumeIcon muted={!soundOn} /></button>
             </header>
+            <button className="icon-button game-back" onClick={goBack} aria-label="返回上一步"><BackIcon /></button>
             {stage === 'broth' && <ChoiceScreen eyebrow="第一步" title="今晚想喝什么汤？" choices={broths} selected={[broth]} onSelect={setBroth} onNext={() => setStage('noodle')} />}
             {stage === 'noodle' && <ChoiceScreen eyebrow="第二步" title="选一份喜欢的面" choices={noodles} selected={[noodle]} onSelect={setNoodle} onNext={() => setStage('toppings')} />}
             {stage === 'toppings' && <ChoiceScreen eyebrow="第三步 · 最多 3 种" title="再加点好吃的吧" choices={toppings} selected={selectedToppings} onSelect={toggleTopping} onNext={() => { setPrepIndex(0); setRestoringPrep(false); setStage('prepare') }} grid />}
@@ -315,12 +316,15 @@ function HomeScreen({ start, soundOn, setSoundOn, nightMode, setNightMode, setMo
       <RamenCupVisual surface="ramen-food-full.png" lid="open" steam className="home-cup-visual" />
     </div>
     <div className="home-note">今晚计划：<br />☑ 吃一碗泡面<br /><span>☑ 好好睡觉</span></div>
+    <div className="home-footer">
+    <p className="sound-reminder">打开手机音量，边吃边asmr。</p>
     <button className="primary-cta home-cta" onClick={start}><span>🍜</span>吃碗泡面<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg></button>
     <nav className="home-nav" aria-label="辅助功能">
       <button onClick={() => setModal('settings')}><img src={asset('ui', 'icon-settings.png')} alt="" /><span>设置</span></button>
       <button onClick={() => setModal('how')}><img src={asset('ui', 'icon-how-to.png')} alt="" /><span>玩法介绍</span></button>
       <button onClick={toggleNight}><img src={asset('ui', 'icon-good-night.png')} alt="" /><span>晚安模式</span></button>
     </nav>
+    </div>
   </section>
 }
 
@@ -418,12 +422,12 @@ function EatingScreen({ bites, selected, broth, noodle, eat }: { bites: number; 
   const noodleLevel = noodleLevelForBites(bites)
   return <section className="panel action-screen eating-screen"><p className="eyebrow">{broth.name} · {noodle.name}</p><h1>{bites === 0 ? '趁热开吃' : bites < 6 ? '再来一口' : '最后一口面'}</h1><p className="subcopy">每点一下，就嗦掉一小口。</p>
     <button className="ramen-stage eating-bowl" disabled={bites >= 7} onClick={eat}><RamenCupVisual noodle={noodle} broth={broth} noodleLevel={noodleLevel} eatenBites={bites} seasoned={bites < 4} toppings={selected} steam chopsticksClass={`bite-${bites % 3}`} label={`还剩 ${Math.max(0, 100 - bites * 15)}% 的面`} /></button>
-    <div className="bite-progress" aria-label={`已经吃了 ${bites} 口`}><span style={{ width: `${(bites / 7) * 100}%` }} /></div><p className="hint">点击泡面，夹起一口</p></section>
+    <div className="bite-progress" aria-label={`已经吃了 ${bites} 口`}><span style={{ width: `${(bites / 7) * 100}%` }} /></div><button className="primary-cta tap-cta" disabled={bites >= 7} onClick={eat}>吃一口面</button></section>
 }
 
 function SoupScreen({ sips, broth, drink }: { sips: number; broth: Choice; drink: () => void }) {
   return <section className="panel action-screen"><p className="eyebrow">面吃完啦</p><h1>{sips < 2 ? '喝口热汤吧' : '最后一口汤'}</h1><p className="subcopy">捧起杯子，咕嘟一小口。</p>
-    <button className={`ramen-stage soup-bowl sip-${sips}`} aria-label="剩下的汤" disabled={sips >= 3} onClick={drink}>{sips === 1 || sips === 2 ? <div className="cup-visual"><img className="cup-body" src={soupCupImage(broth.id, sips === 1 ? 'mid' : 'last')} alt={`${broth.name}汤，${sips === 1 ? '喝过一口的中液面' : '最后一口的低液面'}`} /></div> : <RamenCupVisual broth={broth} surface={sips < 2 ? 'ramen-broth-only.png' : undefined} label="剩下的汤" />}</button><div className="bite-progress"><span style={{ width: `${(sips / 3) * 100}%` }} /></div><p className="hint">点击杯子喝汤</p></section>
+    <button className={`ramen-stage soup-bowl sip-${sips}`} aria-label="剩下的汤" disabled={sips >= 3} onClick={drink}>{sips === 1 || sips === 2 ? <div className="cup-visual"><img className="cup-body" src={soupCupImage(broth.id, sips === 1 ? 'mid' : 'last')} alt={`${broth.name}汤，${sips === 1 ? '喝过一口的中液面' : '最后一口的低液面'}`} /></div> : <RamenCupVisual broth={broth} surface={sips < 2 ? 'ramen-broth-only.png' : undefined} label="剩下的汤" />}</button><div className="bite-progress"><span style={{ width: `${(sips / 3) * 100}%` }} /></div><button className="primary-cta tap-cta" disabled={sips >= 3} onClick={drink}>{sips < 2 ? '喝一口汤' : '喝完最后一口'}</button></section>
 }
 
 function SleepScreen({ back }: { back: () => void }) {
@@ -493,7 +497,7 @@ function RamenCupVisual({ surface, noodle, broth = broths[0], noodleLevel = 100,
 function Modal({ type, close, soundOn, setSoundOn }: { type: 'settings' | 'how'; close: () => void; soundOn: boolean; setSoundOn: (value: boolean) => void }) {
   return <div className="modal-backdrop" role="presentation" onClick={close}><section className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()}><button className="modal-close" onClick={close} aria-label="关闭"><CloseIcon /></button>
     <p className="eyebrow">{type === 'settings' ? '设置' : '玩法介绍'}</p><h2 id="modal-title">{type === 'settings' ? '让深夜更舒服' : '怎么吃这碗面？'}</h2>
-    {type === 'settings' ? <button className="setting-row" onClick={() => setSoundOn(!soundOn)}><span>房间背景音</span><b>{soundOn ? '已开启' : '已关闭'}</b></button> : <ol><li>选汤底、面和最多三种配菜</li><li>跟着提示，把泡面一步步泡好</li><li>点击面碗，一小口一小口吃完</li><li>喝完热汤，就安心去睡觉</li></ol>}
+    {type === 'settings' ? <><p className="settings-sound-note">打开手机音量，边吃边asmr。</p><button className="setting-row" onClick={() => setSoundOn(!soundOn)}><span>房间背景音</span><b>{soundOn ? '已开启' : '已关闭'}</b></button></> : <ol><li>选汤底、面和最多三种配菜</li><li>跟着提示，把泡面一步步泡好</li><li>点击面碗，一小口一小口吃完</li><li>喝完热汤，就安心去睡觉</li></ol>}
   </section></div>
 }
 
